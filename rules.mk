@@ -7,9 +7,9 @@ TAP_DANCE_ENABLE = yes
 LEADER_ENABLE    = yes
 COMBO_ENABLE     = yes
 
-SRC += features/caps_word.c
 SRC += features/select_word.c
 SRC += features/layermodes.c
+SRC += features/case_mods.c
 
 # this enables the keyboard-driven reset functionality
 BOOTLOADER = atmel-dfu

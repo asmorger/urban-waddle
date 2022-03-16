@@ -19,17 +19,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include QMK_KEYBOARD_H
 #include "keymap_us_extended.h"
 
-#include <stdio.h>
-#include "features/caps_word.h"
+#include <stdio.h> 
 #include "features/select_word.h"
 #include "features/layermodes.h"
+#include "features/case_mods.h"
 #include "features/keycodes.h"
 
 
 uint16_t COMBO_LEN = COMBO_LENGTH;
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
-  [0] = LAYOUT_split_3x5_2(
+  [_BASE] = LAYOUT_split_3x5_2(
   //,----------------------------------------------------------.                         ,-------------------------------------------------------------/
         KC_Q,          KC_W,      KC_E,       KC_R,        KC_T,                                    KC_Y,       KC_U,      KC_I,       KC_O,       KC_P,
   //|--------+-------------+----------+-----------+------------|                         |--------------+-----------+----------+----------+------------+
@@ -41,13 +41,13 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                                      //`--------------------------------------'  `--------------------------------'
 
   ),
-  [1] = LAYOUT_split_3x5_2(
+  [_SYM] = LAYOUT_split_3x5_2(
   //,-------------------------------------------.                    ,----------------------------------------------.
      KC_HASH, KC_COLN,      KC_LABK,     KC_RABK, KC_HASH,     LALT(KC_SPACE), KC_UNDS,   KC_PIPE,KC_QUOTE,  KC_DLR,
   //|-------+--------+--------+--------+--------|                    |--------+--------+---------+--------+---------|
      KC_LCBR, KC_RCBR,      KC_LPRN,     KC_RPRN,  KC_NO,             KC_EQUAL, KC_TILD, KC_SLASH, KC_DQUO, KC_ENTER,
   //|-------+--------+--------+--------+--------|                    |--------+--------+---------+--------+--------+|
-      KC_DEL, KC_EXLM,  KC_LBRACKET, KC_RBRACKET, KC_BSPC,                TO(2), KC_MINUS,KC_BSLASH, KC_GRAVE,   KC_ESC,
+      KC_DEL, KC_EXLM,  KC_LBRACKET, KC_RBRACKET, KC_BSPC,                TO(_NUM), KC_MINUS,KC_BSLASH, KC_GRAVE,   KC_ESC,
   //|-------+--------+--------+--------+--------+--------|  |--------+--------+--------+---------+--------+--------+|
                                         KC_NO, LCTL(KC_BSPC),     KC_TAB,  KC_LEAD
                             //`--------------------------'  `--------------------------'
@@ -60,10 +60,10 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   //|--------+--------+--------+--------+---------|                    |--------+--------+--------+--------+--------+|
       KC_ASTR,    KC_4,    KC_5,    KC_6, KC_EQUAL,                      KC_LGUI,   KC_F1,   KC_F2,  KC_DOT,  KC_F12,
   //|--------+--------+--------+--------+--------+---------|  |--------+--------+--------+--------+--------+--------+|
-                                            TO(0), KC_LSFT,     SELWORD,   TO(3)
+                                            TO(_BASE), KC_LSFT,     SELWORD,   TO(_NAV)
                              //`---------------------------'  `--------------------------'
   ),
-  [3] = LAYOUT_split_3x5_2(
+  [_NAV] = LAYOUT_split_3x5_2(
   //,----------------------------------------------.                    ,--------------------------------------------------------------.
        RESET,  KC_PGUP,    KC_UP,  _______, _______,                      _______, _______, _______,       _______,             _______,
   //|-------+---------+---------+---------+--------|                    |--------+--------+--------+--------+--------+--------|
@@ -74,7 +74,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                                             KC_LSFT, KC_BSPC,     KC_DEL, ENTRTN
                                         //`---------------------------'  `--------------------------'
   ),
-  [4] = LAYOUT_split_3x5_2(
+  [_NUM2] = LAYOUT_split_3x5_2(
   //,---------------------------------------------.                    ,---------------------------------------------.
      KC_SLASH,    KC_7,    KC_8,    KC_9,  KC_PLUS,                      _______,   _______,   _______,   _______,  _______,
   //|--------+--------+--------+--------+---------|                    |--------+--------+--------+--------+--------+|
@@ -82,10 +82,10 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   //|--------+--------+--------+--------+---------|                    |--------+--------+--------+--------+--------+|
       KC_ASTR,    KC_4,    KC_5,    KC_6, KC_EQUAL,                      _______,   _______,   _______,  _______,  _______,
   //|--------+--------+--------+--------+--------+---------|  |--------+--------+--------+--------+--------+--------+|
-                                            TO(0), KC_LSFT,     KC_LGUI,   ENTRTN
+                                            TO(_BASE), KC_LSFT,     KC_LGUI,   ENTRTN
                              //`---------------------------'  `--------------------------'
   ),
-  [5] = LAYOUT_split_3x5_2(
+  [_SYM2] = LAYOUT_split_3x5_2(
   //,-------------------------------------------.                    ,----------------------------------------------.
      KC_HASH, KC_COLN,      KC_LABK,     KC_RABK, KC_HASH,             _______, _______,  _______, _______,  _______,
   //|-------+--------+--------+--------+--------|                    |--------+--------+---------+--------+---------|
@@ -98,26 +98,36 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   ),
 };
 
+static bool swap_caps_escape = true;
+bool is_caps_swapped(void) {
+    return swap_caps_escape;
+}
+
 bool process_record_user(uint16_t keycode, keyrecord_t* record) {
-  if (!process_caps_word(keycode, record)) { return false; }
-  if (!process_num_word(keycode, record)) { return false; }
+  if (!process_num_word(keycode, record)) { return false; } 
   if (!process_select_word(keycode, record, SELWORD)) { return false; }
 
   switch (keycode)
   { 
     case ENTRTN:
         if (record->event.pressed) {
-            layer_off(1);
-            layer_off(_NUM);
-            layer_off(3);
-            layer_off(4);
-            layer_on(0); 
+            layer_move(_BASE);
             
             tap_code16(KC_ENTER);
             return false;            
         } 
         break;
-    
+
+        case NUMWORD:
+            process_num_word_activation(record);
+            return false;
+
+        case CAPSWORD:
+            if (record->event.pressed) {
+                enable_caps_word();
+            }
+            return false;
+
     default:
         break;
   }
@@ -128,7 +138,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
 LEADER_EXTERNS();
 
 void matrix_scan_user(void) {
-  caps_word_task();
+  //caps_word_task();
 
   LEADER_DICTIONARY() {
     leading = false;
@@ -177,7 +187,7 @@ void process_combo_event(uint16_t combo_index, bool pressed) {
   switch(combo_index) {
     case CAPS_COMBO:
       if (pressed) {
-        caps_word_set(true);  // Activate Caps Word!
+        // enable_caps_word();  // Activate Caps Word!
       }
       break;
   }

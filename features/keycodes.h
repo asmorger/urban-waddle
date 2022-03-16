@@ -5,7 +5,11 @@
 
 enum layers {
   _BASE = 0,
-  _NUM
+  _SYM,
+  _NUM,
+  _NAV,
+  _NUM2,
+  _SYM2 
 };
 
 enum tap_dance_codes {
@@ -20,7 +24,9 @@ enum tap_dance_codes {
 enum custom_keycodes {
   SELWORD = SAFE_RANGE,
   ENTRTN,
-  CANCEL
+  CANCEL,
+  CAPSWORD,
+  NUMWORD
 };
 
 enum combo_events {
