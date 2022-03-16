@@ -9,6 +9,7 @@ COMBO_ENABLE     = yes
 
 SRC += features/caps_word.c
 SRC += features/select_word.c
+SRC += features/layermodes.c
 
 # this enables the keyboard-driven reset functionality
 BOOTLOADER = atmel-dfu

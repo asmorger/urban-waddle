@@ -3,6 +3,11 @@
 #include QMK_KEYBOARD_H
 #include "keymap_us_extended.h"
 
+enum layers {
+  _BASE = 0,
+  _NUM
+};
+
 enum tap_dance_codes {
   DANCE_0,
   DANCE_1,
@@ -14,7 +19,8 @@ enum tap_dance_codes {
 
 enum custom_keycodes {
   SELWORD = SAFE_RANGE,
-  ENTRTN
+  ENTRTN,
+  CANCEL
 };
 
 enum combo_events {

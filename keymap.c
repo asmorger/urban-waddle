@@ -22,7 +22,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <stdio.h>
 #include "features/caps_word.h"
 #include "features/select_word.h"
-#include "keycodes.h"
+#include "features/layermodes.h"
+#include "features/keycodes.h"
 
 
 uint16_t COMBO_LEN = COMBO_LENGTH;
@@ -51,7 +52,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                                         KC_NO, LCTL(KC_BSPC),     KC_TAB,  KC_LEAD
                             //`--------------------------'  `--------------------------'
   ),
-  [2] = LAYOUT_split_3x5_2(
+  [_NUM] = LAYOUT_split_3x5_2(
   //,---------------------------------------------.                    ,---------------------------------------------.
      KC_SLASH,    KC_7,    KC_8,    KC_9,  KC_PLUS,                      KC_QUES,   KC_F7,   KC_F8,   KC_F9,  KC_F10,
   //|--------+--------+--------+--------+---------|                    |--------+--------+--------+--------+--------+|
@@ -83,11 +84,23 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   //|--------+--------+--------+--------+--------+---------|  |--------+--------+--------+--------+--------+--------+|
                                             TO(0), KC_LSFT,     KC_LGUI,   ENTRTN
                              //`---------------------------'  `--------------------------'
-  )
+  ),
+  [5] = LAYOUT_split_3x5_2(
+  //,-------------------------------------------.                    ,----------------------------------------------.
+     KC_HASH, KC_COLN,      KC_LABK,     KC_RABK, KC_HASH,             _______, _______,  _______, _______,  _______,
+  //|-------+--------+--------+--------+--------|                    |--------+--------+---------+--------+---------|
+     KC_LCBR, KC_RCBR,      KC_LPRN,     KC_RPRN,  KC_NO,              _______, _______,  KC_EQUAL, _______,  _______,
+  //|-------+--------+--------+--------+--------|                    |--------+--------+---------+--------+--------+|
+      KC_DEL, KC_EXLM,  KC_LBRACKET, KC_RBRACKET, KC_BSPC,             _______, _______,  _______, _______,  _______,
+  //|-------+--------+--------+--------+--------+--------|  |--------+--------+--------+---------+--------+--------+|
+                                        KC_NO, LCTL(KC_BSPC),     KC_TAB,  KC_LEAD
+                            //`--------------------------'  `--------------------------'=
+  ),
 };
 
 bool process_record_user(uint16_t keycode, keyrecord_t* record) {
   if (!process_caps_word(keycode, record)) { return false; }
+  if (!process_num_word(keycode, record)) { return false; }
   if (!process_select_word(keycode, record, SELWORD)) { return false; }
 
   switch (keycode)
@@ -95,7 +108,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
     case ENTRTN:
         if (record->event.pressed) {
             layer_off(1);
-            layer_off(2);
+            layer_off(_NUM);
             layer_off(3);
             layer_off(4);
             layer_on(0); 
