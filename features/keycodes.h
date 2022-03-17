@@ -29,8 +29,3 @@ enum custom_keycodes {
   NUMWORD,
   SNAKECASE
 };
-
-enum combo_events {
-    CAPS_COMBO,
-    COMBO_LENGTH
-};

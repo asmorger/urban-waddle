@@ -17,6 +17,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include QMK_KEYBOARD_H
+
+// includes gboards combos from http://combos.gboards.ca/docs/install/
+#include "g/keymap_combo.h"
 #include "keymap_us_extended.h"
 
 #include <stdio.h> 
@@ -25,8 +28,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "features/case_mods.h"
 #include "features/keycodes.h"
 
-
-uint16_t COMBO_LEN = COMBO_LENGTH;
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   [_BASE] = LAYOUT_split_3x5_2(
@@ -211,22 +212,6 @@ void matrix_scan_user(void) {
     SEQ_TWO_KEYS(KC_G, KC_C) { SEND_STRING("git commit "); }
     SEQ_THREE_KEYS(KC_G, KC_C, KC_S) { SEND_STRING("git commit -sm ''" SS_TAP(X_LEFT)); }
     SEQ_THREE_KEYS(KC_G, KC_C, KC_A) { SEND_STRING("git commit --amend -m ''" SS_TAP(X_LEFT)); }
-  }
-}
-
-const uint16_t PROGMEM caps_combo[] = {KC_A, KC_SCLN, COMBO_END};
-
-combo_t key_combos[] = {
-  [CAPS_COMBO] = COMBO_ACTION(caps_combo),
-};
-
-void process_combo_event(uint16_t combo_index, bool pressed) {
-  switch(combo_index) {
-    case CAPS_COMBO:
-      if (pressed) {
-        enable_caps_word();  // Activate Caps Word!
-      }
-      break;
   }
 }
 

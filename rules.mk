@@ -7,6 +7,8 @@ TAP_DANCE_ENABLE = yes
 LEADER_ENABLE    = yes
 COMBO_ENABLE     = yes
 
+VPATH  +=  keyboards/gboards/
+
 SRC += features/select_word.c
 SRC += features/layermodes.c
 SRC += features/case_mods.c
