@@ -17,6 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include QMK_KEYBOARD_H
+#include "features/keycodes.h"
 
 // includes gboards combos from http://combos.gboards.ca/docs/install/
 #include "g/keymap_combo.h"
@@ -26,7 +27,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "features/select_word.h"
 #include "features/layermodes.h"
 #include "features/case_mods.h"
-#include "features/keycodes.h"
 
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
@@ -125,21 +125,21 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
         } 
         break;
 
-        case NUMWORD:
-            process_num_word_activation(record);
-            return false;
+    case NUMWORD:
+        process_num_word_activation(record);
+        return false;
 
-        case CAPSWORD:
-            if (record->event.pressed) {
-                enable_caps_word();
-            }
-            return false;
+    case CAPSWORD:
+        if (record->event.pressed) {
+            enable_caps_word();
+        }
+        return false;
 
-        case SNAKECASE:
-            if (record->event.pressed) {
-                enable_xcase_with(KC_UNDS);
-            }
-            return false;
+    case SNAKECASE:
+        if (record->event.pressed) {
+            enable_xcase_with(KC_UNDS);
+        }
+        return false;
 
     default:
         break;
