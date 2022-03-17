@@ -27,7 +27,4 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define LEADER_PER_KEY_TIMING
 #define LEADER_TIMEOUT 250
 
-#define CAPS_WORD_IDLE_TIMEOUT 5000
 #define ONESHOT_TAP_TOGGLE 2
-
-#define XCASE_DELIMITER_KEY KC_UNDS

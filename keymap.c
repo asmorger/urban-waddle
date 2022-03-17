@@ -32,7 +32,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   [_BASE] = LAYOUT_split_3x5_2(
   //,----------------------------------------------------------.                         ,-------------------------------------------------------------/
-        KC_Q,          KC_W,      KC_E,       KC_R,        KC_T,                                    KC_Y,       KC_U,      KC_I,       KC_O,       KC_P,
+         KC_Q,         KC_W,      KC_E,       KC_R,        KC_T,                                    KC_Y,       KC_U,      KC_I,       KC_O,       KC_P,
   //|--------+-------------+----------+-----------+------------|                         |--------------+-----------+----------+----------+------------+
          KC_A,         KC_S,      KC_D,       KC_F,        KC_G,                             TD(DANCE_3),       KC_J,LT(4, KC_K),LT(3, KC_L),    KC_SCLN,
   //|--------+-------------+----------+-----------+------------|                         |--------------+-----------+----------+----------+------------+
@@ -96,7 +96,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   //|-------+--------+--------+--------+--------+--------|  |--------+--------+--------+---------+--------+--------+|
                                         KC_NO, LCTL(KC_BSPC),     KC_TAB,  KC_LEAD
                             //`--------------------------'  `--------------------------'=
-  ),
+  )
 };
 
 static bool linux_mode = false;
@@ -104,15 +104,10 @@ bool in_linux(void) {
     return linux_mode;
 }
 
-static bool swap_caps_escape = true;
-bool is_caps_swapped(void) {
-    return swap_caps_escape;
-}
-
 bool process_record_user(uint16_t keycode, keyrecord_t* record) {
-  if (!process_num_word(keycode, record)) { return false; } 
+  // if (!process_num_word(keycode, record)) { return false; } 
   if (!process_case_modes(keycode, record)) { return false; } 
-  if (!process_select_word(keycode, record, SELWORD)) { return false; }
+  // if (!process_select_word(keycode, record, SELWORD)) { return false; }
 
   switch (keycode)
   { 
@@ -148,17 +143,21 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
   return true;
 }
 
-// https://github.com/andrewjrae/kyria-keymap#case-modes
+// Returns true if the case modes should terminate, false if they continue
+// Note that the keycodes given to this function will be stripped down to
+// basic keycodes if they are dual function keys. Meaning a modtap on 'a'
+// will pass KC_A rather than LSFT_T(KC_A).
+// Case delimiters will also not be passed into this function.
 bool terminate_case_modes(uint16_t keycode, const keyrecord_t *record) {
     switch (keycode) {
         // Keycodes to ignore (don't disable caps word)
-            case KC_A ... KC_Z:
-            case KC_1 ... KC_0:
-            case KC_MINS:
-            case KC_UNDS:
-            case KC_BSPC:
-            case CAPSWORD:
-            case SNAKECASE:
+        case KC_A ... KC_Z:
+        case KC_1 ... KC_0:
+        case KC_MINS:
+        case KC_UNDS:
+        case KC_BSPC:
+        case CAPSWORD:
+        case SNAKECASE:
             // If mod chording disable the mods
             if (record->event.pressed && (get_mods() != 0)) {
                 return true;
@@ -176,7 +175,6 @@ bool terminate_case_modes(uint16_t keycode, const keyrecord_t *record) {
 LEADER_EXTERNS();
 
 void matrix_scan_user(void) {
-  //caps_word_task();
 
   LEADER_DICTIONARY() {
     leading = false;
