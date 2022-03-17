@@ -35,7 +35,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   //|--------+-------------+----------+-----------+------------|                         |--------------+-----------+----------+----------+------------+
          KC_A,         KC_S,      KC_D,       KC_F,        KC_G,                             TD(DANCE_3),       KC_J,LT(4, KC_K),LT(3, KC_L),    KC_SCLN,
   //|--------+-------------+----------+-----------+------------|                         |--------------+-----------+----------+----------+------------+
-         KC_Z,         KC_X,      KC_C,TD(DANCE_2),        KC_B,                                    KC_N,TD(DANCE_4),   KC_COMM,     KC_DOT,TD(DANCE_5),
+         KC_Z,         KC_X,      KC_C,TD(DANCE_2),        KC_B,                                    KC_N,TD(DANCE_4),   KC_COMM,    KC_DOT,TD(DANCE_5),
   //|--------+-------------+----------+-----------+------------+--------------|  |--------+-------------+-----------+----------+----------+------------+|
                                    MT(MOD_MEH,KC_SPACE), OSM(MOD_LSFT),    OSM(MOD_RCTL),  OSL(1)
                                      //`--------------------------------------'  `--------------------------------'
@@ -98,6 +98,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   ),
 };
 
+static bool linux_mode = false;
+bool in_linux(void) {
+    return linux_mode;
+}
+
 static bool swap_caps_escape = true;
 bool is_caps_swapped(void) {
     return swap_caps_escape;
@@ -105,6 +110,7 @@ bool is_caps_swapped(void) {
 
 bool process_record_user(uint16_t keycode, keyrecord_t* record) {
   if (!process_num_word(keycode, record)) { return false; } 
+  if (!process_case_modes(keycode, record)) { return false; } 
   if (!process_select_word(keycode, record, SELWORD)) { return false; }
 
   switch (keycode)
@@ -128,11 +134,42 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
             }
             return false;
 
+        case SNAKECASE:
+            if (record->event.pressed) {
+                enable_xcase_with(KC_UNDS);
+            }
+            return false;
+
     default:
         break;
   }
 
   return true;
+}
+
+// https://github.com/andrewjrae/kyria-keymap#case-modes
+bool terminate_case_modes(uint16_t keycode, const keyrecord_t *record) {
+    switch (keycode) {
+        // Keycodes to ignore (don't disable caps word)
+            case KC_A ... KC_Z:
+            case KC_1 ... KC_0:
+            case KC_MINS:
+            case KC_UNDS:
+            case KC_BSPC:
+            case CAPSWORD:
+            case SNAKECASE:
+            // If mod chording disable the mods
+            if (record->event.pressed && (get_mods() != 0)) {
+                return true;
+            }
+            break;
+        default:
+            if (record->event.pressed) {
+                return true;
+            }
+            break;
+    }
+    return false;
 }
 
 LEADER_EXTERNS();
@@ -157,7 +194,7 @@ void matrix_scan_user(void) {
     SEQ_TWO_KEYS(KC_D, KC_W) { SEND_STRING("dotnet watch" SS_TAP(X_ENTER)); }
     SEQ_TWO_KEYS(KC_D, KC_O) { SEND_STRING("dotnet outdated " SS_TAP(X_ENTER)); }
 
-    SEQ_TWO_KEYS(KC_D, KC_F) { SEND_STRING("() => ;" SS_TAP(X_LEFT)); }
+    SEQ_TWO_KEYS(KC_A, KC_F) { SEND_STRING("() => ;" SS_TAP(X_LEFT)); }
 
     // Git
     SEQ_TWO_KEYS(KC_G, KC_P) { SEND_STRING("git push "); }
@@ -187,7 +224,7 @@ void process_combo_event(uint16_t combo_index, bool pressed) {
   switch(combo_index) {
     case CAPS_COMBO:
       if (pressed) {
-        // enable_caps_word();  // Activate Caps Word!
+        enable_caps_word();  // Activate Caps Word!
       }
       break;
   }

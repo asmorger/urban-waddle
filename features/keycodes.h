@@ -26,7 +26,8 @@ enum custom_keycodes {
   ENTRTN,
   CANCEL,
   CAPSWORD,
-  NUMWORD
+  NUMWORD,
+  SNAKECASE
 };
 
 enum combo_events {
