@@ -4,12 +4,13 @@
 #include "keymap_us_extended.h"
 
 enum layers {
-  _BASE = 0,
+  _QWERTY = 0,
   _SYM,
   _NUM,
   _NAV,
   _NUM2,
-  _SYM2 
+  _SYM2,
+  _COLEMAK
 };
 
 enum tap_dance_codes {
