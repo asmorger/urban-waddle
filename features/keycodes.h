@@ -10,7 +10,8 @@ enum layers {
   _NAV,
   _NUM2,
   _SYM2,
-  _COLEMAK
+  _COLEMAK,
+  _WINNAV
 };
 
 enum tap_dance_codes {
@@ -28,5 +29,8 @@ enum custom_keycodes {
   CANCEL,
   CAPSWORD,
   NUMWORD,
-  SNAKECASE
+  SNAKECASE,
+  DESKTOP1,
+  DESKTOP2,
+  DESKTOP3
 };
